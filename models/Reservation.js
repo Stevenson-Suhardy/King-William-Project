@@ -22,36 +22,6 @@ class Reservation {
     return pool.promise().query(query, values);
   }
 
-  // Find the guest ID
-  static findGuestById(id) {
-    return pool.promise().query("SELECT * FROM guest WHERE guest_id = ?", [id]);
-  }
-
-  // Find rooms that are not occupied
-  static findEmptyRooms() {
-    return pool.promise().query("SELECT * FROM room WHERE rm_is_occupied = 0");
-  }
-
-  // Update the room so that the room is occupied
-  static async occupyRoom(roomId) {
-    try {
-      const query = "UPDATE room SET rm_is_occupied = 1 WHERE rm_id = ?";
-      const [result] = await pool.promise().query(query, [roomId]);
-
-      // Check if the update was successful
-      if (result.affectedRows > 0) {
-        console.log(`Room status updated for roomId ${roomId}`);
-        return true;
-      } else {
-        console.log(`Room with roomId ${roomId} not found`);
-        return false;
-      }
-    } catch (error) {
-      console.error("Error updating room status:", error);
-      throw error;
-    }
-  }
-
   // Insert
   static addReservation(newReservation) {
     return new Promise((resolve, reject) => {
@@ -80,7 +50,7 @@ class Reservation {
     return pool.promise().query(
       `SELECT * FROM room LEFT JOIN room_category ON room.rm_category_id = room_category.rm_category_id WHERE rm_id NOT IN 
       (SELECT rm_id FROM guest_stay 
-      WHERE guest_stay_check_in_date <= ? AND guest_stay_check_out_date >= ?)`,
+      WHERE guest_stay_check_in_date <= ? AND guest_stay_check_out_date >= ? AND guest_stay_is_cancelled = 0)`,
       [checkOutDate, checkInDate]
     );
   }
@@ -91,6 +61,24 @@ class Reservation {
       .query(
         "UPDATE guest_stay SET guest_stay_is_cancelled = 1, guest_stay_cancelled_time = current_timestamp WHERE guest_stay_id = ?",
         [id]
+      );
+  }
+
+  static getCurrentBalance(stay_id) {
+    return pool
+      .promise()
+      .query(
+        `SELECT guest_stay_balance FROM guest_stay WHERE guest_stay_id = ?`,
+        [stay_id]
+      );
+  }
+
+  static updateBalance(updatedBalance, stay_id) {
+    return pool
+      .promise()
+      .query(
+        `UPDATE guest_stay SET guest_stay_balance = ? WHERE guest_stay_id = ?`,
+        [updatedBalance, stay_id]
       );
   }
 }

@@ -96,7 +96,7 @@ const cancelReservation = (req, res) => {
       const diffTime = Math.abs(date2 - date1);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      GuestTransaction.getCurrentBalance(id).then(([currentBalance]) => {
+      Reservation.getCurrentBalance(id).then(([currentBalance]) => {
         let updatedBalance;
 
         if (diffDays <= 2) {
@@ -107,7 +107,7 @@ const cancelReservation = (req, res) => {
           updatedBalance = 0.0;
         }
 
-        GuestTransaction.updateBalance(updatedBalance, id).then(() => {
+        Reservation.updateBalance(updatedBalance, id).then(() => {
           Reservation.cancelReservation(id)
             .then(() => {
               res.redirect("/reservation/all-reservations");
@@ -142,12 +142,12 @@ const editReservationView = (req, res) => {
 const editReservation = (req, res) => {
   const id = req.params.id;
 
-  GuestTransaction.getCurrentBalance(id).then(([currentBalance]) => {
+  Reservation.getCurrentBalance(id).then(([currentBalance]) => {
     const updatedBalance = parseFloat(
       currentBalance[0].guest_stay_balance - parseFloat(req.body.balance)
     );
 
-    GuestTransaction.updateBalance(updatedBalance, id)
+    Reservation.updateBalance(updatedBalance, id)
       .then(() => {
         res.redirect("/reservation/all-reservations");
       })

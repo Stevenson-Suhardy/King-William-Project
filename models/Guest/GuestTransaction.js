@@ -46,18 +46,6 @@ class GuestTransaction {
 
     return pool.promise().query(query, values);
   }
-
-  static getCurrentBalance(stay_id) {
-    return pool.promise().query(
-      `SELECT guest_stay_balance FROM guest_stay WHERE guest_stay_id = ?`, [stay_id],
-    );
-  }
-
-  static updateBalance(updatedBalance, stay_id){
-    return pool.promise().query(
-      `UPDATE guest_stay SET guest_stay_balance = ? WHERE guest_stay_id = ?`, [updatedBalance, stay_id]
-    );
-  }
 }
 
 module.exports = GuestTransaction;

@@ -1,6 +1,7 @@
 const Item = require("../models/Item");
-
 const GuestTransaction = require("../models/Guest/GuestTransaction");
+const Reservation = require("../models/Reservation");
+
 const allTransactionsView = (req, res) => {
   const pageTitle = "King William's - Transactions";
   const pageStyle = "/css/transaction/all-transactions.css";
@@ -28,8 +29,6 @@ const addTransactionView = (req, res) => {
   });
 };
 
-
-
 const createTransactions = (req, res) => {
   Item.findItems({ item_id: req.body.item })
     .then(([rows]) => {
@@ -43,27 +42,37 @@ const createTransactions = (req, res) => {
       GuestTransaction.createTransaction(newTransaction)
         .then(() => {
           // Get the current balance and update it after creating a new transaction
-          GuestTransaction.getCurrentBalance(req.body.guest_stay_id)
+          Reservation.getCurrentBalance(req.body.guest_stay_id)
             .then(([currentBalance]) => {
               console.log(currentBalance);
-              if (!currentBalance || isNaN(parseFloat(currentBalance[0].guest_stay_balance))) {
-                throw new Error('Invalid current balance');
+              if (
+                !currentBalance ||
+                isNaN(parseFloat(currentBalance[0].guest_stay_balance))
+              ) {
+                throw new Error("Invalid current balance");
               }
 
               // Original balance including 13% tax
-              const originalBalance = parseFloat(currentBalance[0].guest_stay_balance) / 1.13;
+              const originalBalance =
+                parseFloat(currentBalance[0].guest_stay_balance) / 1.13;
 
               // Transaction total without tax
-              const transactionTotalWithoutTax = parseFloat(newTransaction.guest_trans_price) * parseFloat(newTransaction.guest_trans_item_quantity);
+              const transactionTotalWithoutTax =
+                parseFloat(newTransaction.guest_trans_price) *
+                parseFloat(newTransaction.guest_trans_item_quantity);
 
               // Add the transaction total without tax to the original balance
-              const updatedBalanceWithoutTax = originalBalance + transactionTotalWithoutTax;
+              const updatedBalanceWithoutTax =
+                originalBalance + transactionTotalWithoutTax;
 
               // Add 13% tax to the updated balance
               const updatedBalance = updatedBalanceWithoutTax * 1.13;
 
               // Update the balance in the guest_stay table
-              return GuestTransaction.updateBalance(updatedBalance, req.body.guest_stay_id);
+              return Reservation.updateBalance(
+                updatedBalance,
+                req.body.guest_stay_id
+              );
             })
             .then(() => res.redirect("/transaction/all-transactions"))
             .catch((err) => {
