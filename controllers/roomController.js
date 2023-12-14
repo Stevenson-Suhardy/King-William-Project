@@ -1,6 +1,13 @@
+// Imports
 const pool = require("../database");
 const Room = require("../models/Room/Room");
 const RoomStatus = require("../models/Room/RoomStatus");
+
+/**
+ * All Rooms View
+ * @param {*} req
+ * @param {*} res
+ */
 const allRoomsView = async (req, res) => {
   try {
     const rooms = await Room.getByFilters({});
@@ -15,7 +22,11 @@ const allRoomsView = async (req, res) => {
   }
 };
 
-// roomController.js
+/**
+ * Edit Room View
+ * @param {*} req
+ * @param {*} res
+ */
 const editRoomView = async (req, res) => {
   try {
     const roomId = req.params.id;
@@ -34,22 +45,32 @@ const editRoomView = async (req, res) => {
   }
 };
 
+/**
+ * Update Room Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const updateRoom = async (req, res) => {
   try {
     const roomId = req.params.id;
     const updatedData = {
       rm_status_id: req.body.status,
-      rm_is_occupied: req.body.occupied
+      rm_is_occupied: req.body.occupied,
     };
 
     await Room.update(roomId, updatedData);
-    res.redirect('/room/all-rooms');
+    res.redirect("/room/all-rooms");
   } catch (error) {
     console.error(error);
     res.status(500).send("Server Error");
   }
 };
 
+/**
+ * Search Rooms Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const searchRooms = async (req, res) => {
   try {
     const filters = {
@@ -71,4 +92,4 @@ const searchRooms = async (req, res) => {
   }
 };
 
-module.exports = { allRoomsView, searchRooms, editRoomView, updateRoom};
+module.exports = { allRoomsView, searchRooms, editRoomView, updateRoom };

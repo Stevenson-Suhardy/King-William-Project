@@ -1,6 +1,8 @@
+// Imports
 const Handlebars = require("handlebars");
 const { options } = require("./routes/route");
 
+// Helper Functions
 Handlebars.registerHelper("formatDate", function (date) {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");

@@ -1,6 +1,12 @@
+// Imports
 const Guest = require("../models/Guest/Guest");
 const pool = require("../database");
 
+/**
+ * All Guest View
+ * @param {*} req
+ * @param {*} res
+ */
 const allGuestsView = (req, res) => {
   const criteria = req.query;
   Guest.findByCriteria(criteria)
@@ -14,6 +20,11 @@ const allGuestsView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Edit Guest View
+ * @param {*} req
+ * @param {*} res
+ */
 const editGuestView = (req, res) => {
   const id = req.params.id;
   Guest.findById(id)
@@ -31,6 +42,11 @@ const editGuestView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Edit Guest Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const editGuest = (req, res) => {
   const id = req.params.id;
   const updateData = req.body;
@@ -39,7 +55,7 @@ const editGuest = (req, res) => {
       res.status(500).send(err);
       return;
     }
-    connection.beginTransaction(err => {
+    connection.beginTransaction((err) => {
       if (err) {
         connection.release();
         res.status(500).send(err);
@@ -47,7 +63,7 @@ const editGuest = (req, res) => {
       }
       Guest.updateById(id, updateData, connection)
         .then(() => {
-          connection.commit(err => {
+          connection.commit((err) => {
             if (err) {
               connection.rollback(() => {
                 connection.release();
@@ -69,6 +85,11 @@ const editGuest = (req, res) => {
   });
 };
 
+/**
+ * Add Guest View
+ * @param {*} req
+ * @param {*} res
+ */
 const addGuestView = (req, res) => {
   const pageTitle = "King William's - Add Guest";
   const pageStyle = "/css/guest/add-guest.css";
@@ -78,6 +99,11 @@ const addGuestView = (req, res) => {
   });
 };
 
+/**
+ * Add Guest Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const addGuest = (req, res) => {
   const newGuestData = req.body;
   pool.getConnection((err, connection) => {
@@ -85,7 +111,7 @@ const addGuest = (req, res) => {
       res.status(500).send(err);
       return;
     }
-    connection.beginTransaction(err => {
+    connection.beginTransaction((err) => {
       if (err) {
         connection.release();
         res.status(500).send(err);
@@ -93,7 +119,7 @@ const addGuest = (req, res) => {
       }
       Guest.create(newGuestData, connection)
         .then(() => {
-          connection.commit(err => {
+          connection.commit((err) => {
             if (err) {
               connection.rollback(() => {
                 connection.release();
@@ -115,4 +141,11 @@ const addGuest = (req, res) => {
   });
 };
 
-module.exports = { allGuestsView, editGuestView, editGuest, addGuestView, addGuest };
+// Exports
+module.exports = {
+  allGuestsView,
+  editGuestView,
+  editGuest,
+  addGuestView,
+  addGuest,
+};

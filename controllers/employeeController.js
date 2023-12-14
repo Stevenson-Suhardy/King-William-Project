@@ -1,8 +1,14 @@
+// Imports
 const pool = require("../database");
 const Employee = require("../models/Employee/Employee");
 const Position = require("../models/Position");
 const position = new Position();
 
+/**
+ * All employees view
+ * @param {*} req
+ * @param {*} res
+ */
 const allEmployeesView = (req, res) => {
   const criteria = req.query;
   Employee.findByCriteria(criteria)
@@ -16,6 +22,11 @@ const allEmployeesView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Add Employee View
+ * @param {*} req
+ * @param {*} res
+ */
 const addEmployeeView = (req, res) => {
   const pageTitle = "King William's - Add Employee";
   const pageStyle = "/css/employee/add-employee.css";
@@ -29,6 +40,11 @@ const addEmployeeView = (req, res) => {
   });
 };
 
+/**
+ * Add Employee Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const addEmployee = (req, res) => {
   const positionId = parseInt(req.body.position);
 
@@ -51,6 +67,11 @@ const addEmployee = (req, res) => {
     .catch((err) => res.status(500).send(err.message));
 };
 
+/**
+ * Edit Employee View
+ * @param {*} req
+ * @param {*} res
+ */
 const editEmployeeView = (req, res) => {
   const id = req.params.id;
   const pageTitle = "King William's - Edit Employee";
@@ -76,6 +97,11 @@ const editEmployeeView = (req, res) => {
     .catch((err) => res.status(500).send(err.message));
 };
 
+/**
+ * Edit Employee Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const editEmployee = (req, res) => {
   const id = req.params.id;
   const employmentType = req.body.type === "permanent" ? 1 : 0;
@@ -132,6 +158,7 @@ const editEmployee = (req, res) => {
   });
 };
 
+// Exports
 module.exports = {
   allEmployeesView,
   addEmployeeView,

@@ -1,7 +1,13 @@
+// Imports
 const Item = require("../models/Item");
 const GuestTransaction = require("../models/Guest/GuestTransaction");
 const Reservation = require("../models/Reservation");
 
+/**
+ * All Transactions View
+ * @param {*} req
+ * @param {*} res
+ */
 const allTransactionsView = (req, res) => {
   const pageTitle = "King William's - Transactions";
   const pageStyle = "/css/transaction/all-transactions.css";
@@ -17,6 +23,11 @@ const allTransactionsView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Add Transaction View
+ * @param {*} req
+ * @param {*} res
+ */
 const addTransactionView = (req, res) => {
   const pageTitle = "King William's - Add Transaction";
   const pageStyle = "/css/transaction/add-transaction.css";
@@ -29,6 +40,11 @@ const addTransactionView = (req, res) => {
   });
 };
 
+/**
+ * Add Transaction Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const createTransactions = (req, res) => {
   Item.findItems({ item_id: req.body.item })
     .then(([rows]) => {
@@ -91,6 +107,7 @@ const createTransactions = (req, res) => {
     });
 };
 
+// Exports
 module.exports = {
   allTransactionsView,
   addTransactionView,

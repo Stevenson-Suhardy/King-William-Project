@@ -1,7 +1,12 @@
+// Imports
 const Reservation = require("../models/Reservation");
 const Room = require("../models/Room/Room");
-const GuestTransaction = require("../models/Guest/GuestTransaction");
 
+/**
+ * All Reservation View
+ * @param {*} req
+ * @param {*} res
+ */
 const allReservationView = (req, res) => {
   const criteria = req.query;
   const pageTitle = "King William's - Reservations";
@@ -18,6 +23,11 @@ const allReservationView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Add Reservation View
+ * @param {*} req
+ * @param {*} res
+ */
 const addReservationView = (req, res) => {
   const id = req.params.id;
 
@@ -28,11 +38,17 @@ const addReservationView = (req, res) => {
   });
 };
 
+/**
+ * Choose Room View
+ * @param {*} req
+ * @param {*} res
+ */
 const chooseRoomView = (req, res) => {
   const id = req.params.id;
   const checkInDate = req.query.checkInDate;
   const checkOutDate = req.query.checkOutDate;
 
+  // Checks the available rooms based on the check in and check out dates
   Reservation.findAvailableRooms(checkInDate, checkOutDate).then(
     ([availableRooms]) => {
       res.render("reservation/choose-room", {
@@ -47,6 +63,11 @@ const chooseRoomView = (req, res) => {
   );
 };
 
+/**
+ * Add Reservation Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const addReservation = async (req, res) => {
   try {
     const guestId = req.params.id;
@@ -58,8 +79,10 @@ const addReservation = async (req, res) => {
       const date1 = new Date(checkInDate);
       const date2 = new Date(checkOutDate);
       const diffTime = Math.abs(date2 - date1);
+      // Check Out and Check In Dates Difference
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+      // Calculate the total room price
       const roomPrice = parseFloat(room.rm_base_rate * parseInt(diffDays));
 
       // Create a new reservation
@@ -86,6 +109,11 @@ const addReservation = async (req, res) => {
   }
 };
 
+/**
+ * Cancel Reservation Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const cancelReservation = (req, res) => {
   const id = req.params.id;
 
@@ -94,11 +122,13 @@ const cancelReservation = (req, res) => {
       const date1 = new Date();
       const date2 = new Date(rows[0].guest_stay_check_in_date);
       const diffTime = Math.abs(date2 - date1);
+      // Today's Date and Check In Dates Difference
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
       Reservation.getCurrentBalance(id).then(([currentBalance]) => {
         let updatedBalance;
 
+        // Calculate penalty
         if (diffDays <= 2) {
           updatedBalance = parseFloat(
             currentBalance[0].guest_stay_balance / parseFloat(2)
@@ -119,6 +149,11 @@ const cancelReservation = (req, res) => {
   });
 };
 
+/**
+ * Edit Reservation View
+ * @param {*} req
+ * @param {*} res
+ */
 const editReservationView = (req, res) => {
   const id = req.params.id;
   const pageTitle = "King William's - Edit Reservation";
@@ -139,14 +174,20 @@ const editReservationView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+/**
+ * Edit Reservation Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const editReservation = (req, res) => {
   const id = req.params.id;
 
+  // Get the current balance of the reservation
   Reservation.getCurrentBalance(id).then(([currentBalance]) => {
     const updatedBalance = parseFloat(
       currentBalance[0].guest_stay_balance - parseFloat(req.body.balance)
     );
-
+    // Update balance based on user input
     Reservation.updateBalance(updatedBalance, id)
       .then(() => {
         res.redirect("/reservation/all-reservations");
@@ -164,6 +205,7 @@ process.on("uncaughtException", (err) => {
   // Handle or log the uncaught exception here
 });
 
+// Exports
 module.exports = {
   allReservationView,
   addReservationView,

@@ -1,5 +1,11 @@
+// Imports
 const Invoice = require("../models/Invoice");
 
+/**
+ * Invoice View Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const invoiceView = (req, res) => {
   const id = req.params.id;
   Invoice.findInvoiceById(id)
@@ -11,8 +17,10 @@ const invoiceView = (req, res) => {
         const date1 = new Date(checkInDate);
         const date2 = new Date(checkOutDate);
         const diffTime = Math.abs(date2 - date1);
+        // Check Out and Check In Dates Difference
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
+        // Calculate the total room price
         const roomPrice = parseFloat(rows[0].rm_base_rate * parseInt(diffDays));
 
         res.render("invoice", {
@@ -36,4 +44,5 @@ const invoiceView = (req, res) => {
     .catch((err) => res.status(500).send(err));
 };
 
+// Exports
 module.exports = { invoiceView };

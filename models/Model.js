@@ -1,5 +1,8 @@
 const pool = require("../database.js");
 
+/**
+ * Base Model for SQL queries
+ */
 class Model {
   constructor(tableName) {
     this.tableName = tableName;

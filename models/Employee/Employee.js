@@ -1,6 +1,11 @@
 const pool = require("../../database");
 
 class Employee {
+  /**
+   * Add Employee
+   * @param {*} newEmployee
+   * @returns
+   */
   static add(newEmployee) {
     return new Promise((resolve, reject) => {
       const query = `
@@ -9,7 +14,6 @@ class Employee {
             emp_postal_code, emp_email, emp_phone, emp_is_permanent, position_id
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         `;
-      // Prepare the values to be inserted, including converting employment type to boolean
       const values = [
         newEmployee.firstName,
         newEmployee.lastName,
@@ -26,11 +30,16 @@ class Employee {
 
       pool.query(query, values, (err, results) => {
         if (err) reject(err);
-        else resolve(results.insertId); // assuming you might want the inserted employee's ID
+        else resolve(results.insertId);
       });
     });
   }
 
+  /**
+   * Find employee by criteria
+   * @param {*} criteria
+   * @returns
+   */
   static findByCriteria(criteria) {
     let query = `
         SELECT 
@@ -58,6 +67,13 @@ class Employee {
     return pool.promise().query(query, values);
   }
 
+  /**
+   * Update Employee by ID
+   * @param {*} id
+   * @param {*} updateData
+   * @param {*} connection
+   * @returns
+   */
   static updateById(id, updateData, connection) {
     let query = "UPDATE employee SET ";
     let updates = [];

@@ -1,3 +1,4 @@
+// Imports
 const express = require("express");
 const exphbs = require("express-handlebars");
 const dotenv = require("dotenv");
@@ -8,6 +9,7 @@ const session = require("express-session");
 
 dotenv.config({ path: "./process.env" });
 
+// Application Configuration
 const PORT = process.env.PORT || 5000;
 
 const app = express();

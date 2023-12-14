@@ -1,3 +1,9 @@
+/**
+ * Login View
+ * @param {*} req
+ * @param {*} res
+ * @returns
+ */
 const loginView = (req, res) => {
   const pageTitle = "Login";
   const pageStyle = "/css/login.css";
@@ -11,6 +17,11 @@ const loginView = (req, res) => {
   });
 };
 
+/**
+ * Login Logic
+ * @param {*} req
+ * @param {*} res
+ */
 const login = (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
@@ -25,4 +36,5 @@ const login = (req, res) => {
   }
 };
 
+// Exports
 module.exports = { loginView, login };
